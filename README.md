@@ -1,10 +1,11 @@
+基于开源项目wechat-article-exporter(2025-06-13拉取代码), 同步微信公众号文章到官网新闻中心的前端项目;
+拉取公众号的接口使用了开源项目的公共代理 AVAILABLE_PROXY_LIST, 若公共代理不可用, 则需考虑自行开发后端服务
+
 <p align="center">
   <img src="./assets/logo.svg" alt="Logo">
 </p>
 
 # wechat-article-exporter
-
-
 
 ![GitHub stars]
 ![GitHub forks]
