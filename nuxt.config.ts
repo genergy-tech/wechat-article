@@ -19,4 +19,13 @@ export default defineNuxtConfig({
       ],
     },
   },
+  proxy: {
+    '/mapi/': {
+        // target: 'https://www.manage.ixms.tech',
+        target: 'https://www.test-manage.ixms.tech',
+        // target: 'http://192.168.20.190:8102',
+        changeOrigin: true,
+        pathRewrite: { '^/api/': '' }
+    }
+  }
 })
