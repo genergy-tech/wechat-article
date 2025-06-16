@@ -21,9 +21,9 @@ export default defineNuxtConfig({
   },
   routeRules: {
     '/mapi/**': {
-        // target: 'https://www.manage.ixms.tech/**',
-        proxy: 'https://www.test-manage.ixms.tech/**',
-        // target: 'http://192.168.20.190:8102/**',
+        proxy: 'https://www.manage.ixms.tech/**',
+        // proxy: 'https://www.test-manage.ixms.tech/**',
+        // proxy: 'http://192.168.20.190:8102/**',
     }
   }
 })
