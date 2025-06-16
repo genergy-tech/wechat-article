@@ -98,9 +98,7 @@ async function syncToHomepage() {
     try {
         downloading.value = true;
         const { cover, title, updatedAt, link, isDeleted } = props;
-        const host = "https://www.manage.ixms.tech";
-        // const host = "http://www.test-manage.ixms.tech";
-        // const host = "http://192.168.20.190:8102";
+        const host = "/mapi";
         const id = link.substring(link.lastIndexOf("/") + 1);
         if (!isDeleted) {
             const url = "m-system/sysweixinarticle/add";
