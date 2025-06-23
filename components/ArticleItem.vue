@@ -57,12 +57,22 @@
                     <span v-else>下载</span>
                 </button> -->
                 <button
+                    v-if="!isDeleted && !syncedIdList.includes(articleId)"
                     :disabled="downloading"
                     @click="syncToHomepage()"
                     class="bg-sky-900 hover:bg-sky-700 disabled:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-sky-50 text-white text-sm font-semibold h-8 px-4 rounded flex items-center justify-center"
                 >
                     <Loader v-if="downloading" :size="20" class="animate-spin" />
-                    <span v-else> {{ isDeleted ? "同步删除" : "同步到官网" }}</span>
+                    <span v-else>同步到官网</span>
+                </button>
+                <button
+                    v-if="isDeleted && syncedIdList.includes(articleId)"
+                    :disabled="downloading"
+                    @click="syncToHomepage()"
+                    class="bg-sky-900 hover:bg-sky-700 disabled:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-sky-50 text-white text-sm font-semibold h-8 px-4 rounded flex items-center justify-center"
+                >
+                    <Loader v-if="downloading" :size="20" class="animate-spin" />
+                    <span v-else>同步删除</span>
                 </button>
             </div>
         </div>
@@ -88,35 +98,45 @@ interface Props {
     isOriginal: boolean;
     albumInfos: AppMsgAlbumInfo[];
     itemShowType: number;
+    syncedIdList: String[];
 }
 
 const props = defineProps<Props>();
 
 const activeAccount = useActiveAccount();
 
+const articleId = computed(() => props.link.substring(props.link.lastIndexOf("/") + 1));
+
 async function syncToHomepage() {
     try {
         downloading.value = true;
         const { cover, title, updatedAt, link, isDeleted } = props;
         const host = "/mapi";
-        const id = link.substring(link.lastIndexOf("/") + 1);
+        const id = articleId;
         if (!isDeleted) {
             const url = "m-system/sysweixinarticle/add";
-            const result = await $fetch<Object>(`${host}/${url}`, {
+            const result = await $fetch<{ code: Number }>(`${host}/${url}`, {
                 method: "POST",
                 body: { id, cover, title, updatedAt, link, isDeleted },
                 headers: { signature: encryptSignature(url) },
                 retryDelay: 10000,
             });
+            if (result.code === 0) {
+                props.syncedIdList.push(articleId.value);
+            }
             console.log(111, result);
         } else {
             const url = `m-system/sysweixinarticle/${id}`;
-            const result = await $fetch<Object>(`${host}/${url}`, {
+            const result = await $fetch<{ code: Number }>(`${host}/${url}`, {
                 method: "DELETE",
                 body: { id },
                 headers: { signature: encryptSignature(url) },
                 retryDelay: 10000,
             });
+            if (result.code === 0) {
+                const idx = props.syncedIdList.indexOf(articleId.value);
+                props.syncedIdList.splice(idx, 1);
+            }
             console.log(222, result);
         }
     } catch (e: any) {
